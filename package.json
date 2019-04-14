@@ -1,0 +1,24 @@
+{
+  "name": "simple-rest-api",
+  "version": "1.0.0",
+  "description": "Simple rest-api to experiment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "author": "Jess Desrochers",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.18.11"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.5.1",
+    "mongoose-unique-validator": "^2.0.2",
+    "morgan": "^1.9.1"
+  }
+}
