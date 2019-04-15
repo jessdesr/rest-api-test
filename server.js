@@ -32,7 +32,11 @@ app.get('/favicon.ico', function(req, res) {
 app.use('/v1', validateUser, v1);
 
 function validateUser(req, res, next) {
-  jwt.verify(req.headers['x-access-token'], req.app.get('secretKey'), function(err, decoded) {
+  let token = req.headers['authorization'];
+  if (token && token.startsWith('Bearer ')) {
+    token = token.slice(7, token.length);
+  }
+  jwt.verify(token, req.app.get('secretKey'), function(err, decoded) {
     if (err) {
       res.json({status:"error", message: err.message, data:null});
     } else {
