@@ -1,0 +1,4 @@
+{
+  "connectionString": "mongodb://localhost/rest-api-test",
+  "secret": "elephants-arugula-bark-telephone"
+}

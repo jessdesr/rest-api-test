@@ -8,10 +8,11 @@ const bodyParser = require('body-parser');
 const users = require('./routes/users');
 const v1 = require('./routes/v1');
 const mongoose = require('./config/db');
+const config = require('./config/config.json');
 
 const app = express();
 
-app.set('secretKey', 'elephants-arugula-bark-telephone');
+app.set('secretKey', config.secret);
 
 // connection to mongodb
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -56,8 +57,10 @@ app.use ((err, req, res, next) => {
   }
 });
 
-app.listen(3000, () => { 
-  console.log('Node server listening on port 3000');
+const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 3000;
+
+app.listen(port, () => { 
+  console.log(`Node server listening on port ${port}`);
 });
 
 module.exports = app;
