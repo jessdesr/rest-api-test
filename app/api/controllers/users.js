@@ -1,4 +1,5 @@
 const userModel = require('../models/users');
+const v1Model = require('../models/v1');
 const bcrypt = require('bcrypt'); 
 const jwt = require('jsonwebtoken');
 
@@ -8,16 +9,19 @@ module.exports = {
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
-  }, (err, result) => {
+  }, (err, account) => {
       if (err) { 
         next(err); 
       } else {
-        console.log(result);
-        const token = jwt.sign({id: result._id}, req.app.get('secretKey'), { expiresIn: '1h' });
+        v1Model.create({
+          email: account.email,
+          value: 0,
+        });
+        const token = jwt.sign({id: account._id}, req.app.get('secretKey'), { expiresIn: '1h' });
         res.json({
           status: "success",
           message: "User added successfully",
-          data: { user: result.email, token: token },
+          data: { user: account.email, token: token },
         });
       }
   });

@@ -1,9 +1,12 @@
+'use strict';
+
 const express = require('express');
 const logger = require('morgan');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 
 const users = require('./routes/users');
+const v1 = require('./routes/v1');
 const mongoose = require('./config/db');
 
 const app = express();
@@ -26,6 +29,19 @@ app.get('/favicon.ico', function(req, res) {
   res.sendStatus(204);
 });
 
+app.use('/v1', validateUser, v1);
+
+function validateUser(req, res, next) {
+  jwt.verify(req.headers['x-access-token'], req.app.get('secretKey'), function(err, decoded) {
+    if (err) {
+      res.json({status:"error", message: err.message, data:null});
+    } else {
+      req.body.userId = decoded.id;
+      next();
+    }
+  });
+}
+
 app.use ((err, req, res, next) => {
   console.log(err);
 
@@ -39,3 +55,5 @@ app.use ((err, req, res, next) => {
 app.listen(3000, () => { 
   console.log('Node server listening on port 3000');
 });
+
+module.exports = app;
