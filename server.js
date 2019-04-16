@@ -18,10 +18,18 @@ app.set('secretKey', config.secret);
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.use(logger('dev'));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  next();
+});
+
 app.get('/', function(req, res){
- res.json({"tutorial" : "Build REST API with node.js"});
+ res.json({"message" : "successfully connected to the Number Storage"});
 });
 
 app.use('/users', users);
@@ -39,23 +47,19 @@ function validateUser(req, res, next) {
   }
   jwt.verify(token, req.app.get('secretKey'), function(err, decoded) {
     if (err) {
-      res.json({status:"error", message: err.message, data:null});
+      if (req.method !== "OPTIONS") {
+        res.status(400);
+        res.json({status:"error", message: err.message, data:null});
+      } else {
+        res.status(200);
+        res.json({status:"success", data:null});
+      }
     } else {
       req.body.userId = decoded.id;
       next();
     }
   });
 }
-
-app.use ((err, req, res, next) => {
-  console.log(err);
-
-  if (err.status === 404) {
-    res.status(404).json({ message: 'Not found' });
-  } else {
-    res.status(500).json({ message: err.message });
-  }
-});
 
 const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 3000;
 
